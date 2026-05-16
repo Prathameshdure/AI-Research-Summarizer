@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Research Summarizer</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        body{
+            margin:0;
+            padding:0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(135deg,#0f172a,#1e293b,#111827);
+            color:white;
+            min-height:100vh;
+        }
+
+        .container{
+            width:90%;
+            max-width:1200px;
+            margin:auto;
+            padding:40px 20px;
+        }
+
+        .title{
+            text-align:center;
+            font-size:50px;
+            font-weight:bold;
+            margin-bottom:10px;
+            background: linear-gradient(to right,#38bdf8,#818cf8,#c084fc);
+
+background-clip: text;
+-webkit-background-clip: text;
+
+color: transparent;
+-webkit-text-fill-color: transparent;
+        }
+
+        .subtitle{
+            text-align:center;
+            color:#cbd5e1;
+            margin-bottom:40px;
+            font-size:18px;
+        }
+
+        .card{
+            background: rgba(255,255,255,0.08);
+            border:1px solid rgba(255,255,255,0.1);
+            border-radius:20px;
+            padding:30px;
+            margin-bottom:30px;
+            backdrop-filter: blur(15px);
+            box-shadow:0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        .card h2{
+            margin-top:0;
+            color:#38bdf8;
+        }
+
+        .summary-box{
+            line-height:1.8;
+            color:#e2e8f0;
+            font-size:17px;
+        }
+
+        textarea{
+            width:100%;
+            height:120px;
+            border:none;
+            outline:none;
+            border-radius:15px;
+            padding:15px;
+            font-size:16px;
+            background:#1e293b;
+            color:white;
+            margin-top:15px;
+        }
+
+        button{
+            margin-top:20px;
+            padding:14px 30px;
+            border:none;
+            border-radius:12px;
+            background:linear-gradient(to right,#3b82f6,#8b5cf6);
+            color:white;
+            font-size:16px;
+            font-weight:bold;
+            cursor:pointer;
+            transition:0.3s;
+        }
+
+        button:hover{
+            transform:scale(1.05);
+        }
+
+        .answer-box{
+            margin-top:20px;
+            background:#0f172a;
+            padding:20px;
+            border-radius:15px;
+            line-height:1.8;
+            border-left:5px solid #38bdf8;
+        }
+
+        .back-btn{
+            display:inline-block;
+            text-decoration:none;
+            margin-top:20px;
+            color:white;
+            background:#ef4444;
+            padding:12px 25px;
+            border-radius:12px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="title">
+        AI Research Summarizer
+    </div>
+
+    <div class="subtitle">
+        Advanced PDF Analysis & AI Question Answering System
+    </div>
+
+    <!-- SUMMARY SECTION -->
+    <div class="card">
+
+        <h2>📄 PDF Summary</h2>
+
+        <div class="summary-box">
+            {{ summary }}
+        </div>
+
+    </div>
+
+    <!-- QUESTION SECTION -->
+    <div class="card">
+
+        <h2>🤖 Ask Questions About PDF</h2>
+
+        <form method="POST" action="/ask">
+
+            <textarea
+                name="question"
+                placeholder="Ask anything from the uploaded PDF..."
+                required></textarea>
+
+            <button type="submit">
+                Ask AI
+            </button>
+
+        </form>
+
+        {% if answer %}
+
+        <div class="answer-box">
+            <h3>AI Answer:</h3>
+
+            <p>{{ answer }}</p>
+        </div>
+
+        {% endif %}
+
+    </div>
+
+    <a href="/" class="back-btn">
+        Upload Another PDF
+    </a>
+
+</div>
+
+</body>
+</html>

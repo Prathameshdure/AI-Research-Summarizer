@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+    <title>ResearchGPT AI</title>
+
+    <!-- CSS LINK -->
+
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- ICONS -->
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+<body>
+
+    <!-- Background Animation -->
+
+    <div class="bg-animation">
+
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+
+    </div>
+
+    <!-- Navbar -->
+
+    <nav>
+
+        <div class="logo">
+            ResearchGPT
+        </div>
+
+        <ul>
+
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Features</a></li>
+            <li><a href="#">AI</a></li>
+            <li><a href="#">Contact</a></li>
+
+        </ul>
+
+    </nav>
+
+    <!-- Hero Section -->
+
+    <section class="hero">
+
+        <div class="hero-left">
+
+            <div class="tag">
+
+                🚀 Next Gen AI Research Assistant
+
+            </div>
+
+            <h1>
+
+                Analyze
+                <span>Research Papers</span>
+                Using AI
+
+            </h1>
+
+            <p>
+
+                Upload PDFs, summarize documents,
+                ask questions and interact with
+                your research using Gemini AI.
+
+            </p>
+
+        </div>
+
+        <!-- Upload Card -->
+
+        <div class="hero-right">
+
+            <div class="upload-card">
+
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+
+                <h2>
+                    Upload PDF
+                </h2>
+
+                <p>
+                    Drag and drop your paper here
+                </p>
+
+                <!-- Upload Form -->
+
+                <form
+                    action="/upload"
+                    method="POST"
+                    enctype="multipart/form-data"
+                >
+
+                    <input
+                        type="file"
+                        name="pdf_file"
+                        accept=".pdf"
+                        required
+                    >
+
+                    <button
+                        type="submit"
+                        class="upload-btn"
+                    >
+
+                        Upload & Analyze
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Summary -->
+
+    {% if summary %}
+
+    <section class="result-section">
+
+        <div class="result-box">
+
+            <h2>🧠 AI Summary</h2>
+
+            <p>{{ summary }}</p>
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+    <!-- Ask Question -->
+
+    {% if uploaded %}
+
+    <section class="result-section">
+
+        <div class="result-box">
+
+            <h2>💬 Ask AI</h2>
+
+            <form action="/ask" method="POST">
+
+                <input
+                    type="text"
+                    name="question"
+                    placeholder="Ask anything about the PDF..."
+                    required
+                >
+
+                <button
+                    type="submit"
+                    class="upload-btn"
+                >
+                    Ask Question
+                </button>
+
+            </form>
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+    <!-- Answer -->
+
+    {% if answer %}
+
+    <section class="result-section">
+
+        <div class="result-box">
+
+            <h2>⚡ AI Answer</h2>
+
+            <p>{{ answer }}</p>
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+</body>
+
+</html>
