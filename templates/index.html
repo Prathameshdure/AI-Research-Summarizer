@@ -1,208 +1,223 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Research Assistant</title>
 
-    <meta charset="UTF-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <meta name="viewport"
-    content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <title>ResearchGPT AI</title>
-
-    <!-- CSS LINK -->
-
-    <link rel="stylesheet"
-    href="{{ url_for('static', filename='style.css') }}">
-
-    <!-- ICONS -->
-
-    <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
 </head>
 
 <body>
 
-    <!-- Background Animation -->
+  <nav class="navbar">
 
-    <div class="bg-animation">
+    <div class="logo">AI Research</div>
 
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
+    <div class="nav-links">
+      <a href="#home">Home</a>
+      <a href="#features">Features</a>
+      <a href="#dashboard">Dashboard</a>
+      <a href="#summary">Summary</a>
+      <a href="#upload">Upload</a>
+    </div>
+
+  </nav>
+
+  <section class="hero" id="home">
+
+    <div class="hero-text">
+
+      <h1>
+        AI Powered
+        <span>Research Assistant</span>
+      </h1>
+
+      <p>
+        Upload research papers, generate AI summaries,
+        ask intelligent questions, and explore semantic search
+        using Gemini API, ChromaDB, and advanced NLP.
+      </p>
+
+      <div class="btn-group">
+        <a href="#upload" class="btn primary-btn">Upload Research</a>
+        <a href="#dashboard" class="btn secondary-btn">Explore Dashboard</a>
+      </div>
 
     </div>
 
-    <!-- Navbar -->
+    <div class="hero-card" id="upload">
 
-    <nav>
+      <h2>Upload PDF</h2>
 
-        <div class="logo">
-            ResearchGPT
-        </div>
+      <div class="upload-box">
 
-        <ul>
+        <p>Drag & Drop Your Research Paper</p>
 
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Features</a></li>
-            <li><a href="#">AI</a></li>
-            <li><a href="#">Contact</a></li>
+        <form action="/upload" method="POST" enctype="multipart/form-data">
 
-        </ul>
+          <input type="file" name="pdf" accept=".pdf" required>
 
-    </nav>
+          <br><br>
 
-    <!-- Hero Section -->
+          <button type="submit" class="btn primary-btn">
+            Upload PDF
+          </button>
 
-    <section class="hero">
+        </form>
 
-        <div class="hero-left">
+      </div>
 
-            <div class="tag">
+    </div>
 
-                🚀 Next Gen AI Research Assistant
+  </section>
 
-            </div>
+  <section id="features">
 
-            <h1>
+    <h2 class="section-title">
+      Project <span>Features</span>
+    </h2>
 
-                Analyze
-                <span>Research Papers</span>
-                Using AI
+    <div class="features">
 
-            </h1>
+      <div class="feature-card">
+        <h3>📄 PDF Processing</h3>
+        <p>
+          Upload research papers and automatically extract meaningful text using advanced PDF parsing.
+        </p>
+      </div>
 
-            <p>
+      <div class="feature-card">
+        <h3>🤖 AI Summarization</h3>
+        <p>
+          Generate concise and accurate summaries using Gemini API and Large Language Models.
+        </p>
+      </div>
 
-                Upload PDFs, summarize documents,
-                ask questions and interact with
-                your research using Gemini AI.
+      <div class="feature-card">
+        <h3>🔍 Semantic Search</h3>
+        <p>
+          Use embeddings and ChromaDB vector search for context-aware document retrieval.
+        </p>
+      </div>
 
-            </p>
+      <div class="feature-card">
+        <h3>💬 AI Chat Assistant</h3>
+        <p>
+          Ask intelligent questions from uploaded papers using Retrieval-Augmented Generation.
+        </p>
+      </div>
 
-        </div>
+    </div>
 
-        <!-- Upload Card -->
+  </section>
 
-        <div class="hero-right">
+  <section id="dashboard">
 
-            <div class="upload-card">
+    <h2 class="section-title">
+      Interactive <span>Dashboard</span>
+    </h2>
 
-                <i class="fa-solid fa-cloud-arrow-up"></i>
+    <div class="dashboard">
 
-                <h2>
-                    Upload PDF
-                </h2>
+      <div class="sidebar">
 
-                <p>
-                    Drag and drop your paper here
-                </p>
+        <h3>Navigation</h3>
 
-                <!-- Upload Form -->
+        <a href="#home">🏠 Home</a>
+        <a href="#upload">📤 Upload PDF</a>
+        <a href="#dashboard">🤖 AI Chat</a>
+        <a href="#summary">📚 Summary</a>
+        <a href="#features">⚡ Features</a>
 
-                <form
-                    action="/upload"
-                    method="POST"
-                    enctype="multipart/form-data"
-                >
+      </div>
 
-                    <input
-                        type="file"
-                        name="pdf_file"
-                        accept=".pdf"
-                        required
-                    >
+      <div class="chat-area">
 
-                    <button
-                        type="submit"
-                        class="upload-btn"
-                    >
+        <div class="chat-box">
 
-                        Upload & Analyze
+          <div class="message user">
+            Summarize this research paper.
+          </div>
 
-                    </button>
+          <div class="message bot">
+            This paper focuses on Retrieval-Augmented Generation systems using vector embeddings and semantic retrieval.
+          </div>
 
-                </form>
+          <div class="message user">
+            What is the main contribution?
+          </div>
 
-            </div>
-
-        </div>
-
-    </section>
-
-    <!-- Summary -->
-
-    {% if summary %}
-
-    <section class="result-section">
-
-        <div class="result-box">
-
-            <h2>🧠 AI Summary</h2>
-
-            <p>{{ summary }}</p>
+          <div class="message bot">
+            The main contribution is an AI-powered research assistant that combines LLMs with ChromaDB semantic search.
+          </div>
 
         </div>
 
-    </section>
+        <div class="chat-input">
 
-    {% endif %}
+          <input type="text" placeholder="Ask something about your research paper...">
 
-    <!-- Ask Question -->
-
-    {% if uploaded %}
-
-    <section class="result-section">
-
-        <div class="result-box">
-
-            <h2>💬 Ask AI</h2>
-
-            <form action="/ask" method="POST">
-
-                <input
-                    type="text"
-                    name="question"
-                    placeholder="Ask anything about the PDF..."
-                    required
-                >
-
-                <button
-                    type="submit"
-                    class="upload-btn"
-                >
-                    Ask Question
-                </button>
-
-            </form>
+          <button>Send</button>
 
         </div>
 
-    </section>
+      </div>
 
-    {% endif %}
+    </div>
 
-    <!-- Answer -->
+  </section>
 
-    {% if answer %}
+  <section id="summary">
 
-    <section class="result-section">
+    <h2 class="section-title">
+      Research <span>Summary</span>
+    </h2>
 
-        <div class="result-box">
+    <div class="summary-cards">
 
-            <h2>⚡ AI Answer</h2>
+      <div class="summary-card">
+        <h3>Abstract</h3>
+        <p>
+          The project develops an AI-powered platform capable of summarizing research papers and answering questions intelligently.
+        </p>
+      </div>
 
-            <p>{{ answer }}</p>
+      <div class="summary-card">
+        <h3>Methodology</h3>
+        <p>
+          The system uses sentence-transformers for embeddings, ChromaDB for storage, and Gemini API for generation.
+        </p>
+      </div>
 
-        </div>
+      <div class="summary-card">
+        <h3>Results</h3>
+        <p>
+          Semantic search improves contextual accuracy and enhances document understanding significantly.
+        </p>
+      </div>
 
-    </section>
+      <div class="summary-card">
+        <h3>Future Scope</h3>
+        <p>
+          Future upgrades include multi-document analysis, citations, voice interaction, and real-time collaboration.
+        </p>
+      </div>
 
-    {% endif %}
+    </div>
+
+  </section>
+
+  <footer>
+    © 2026 AI Research Assistant | Built with Flask, Gemini API & ChromaDB
+  </footer>
 
 </body>
-
 </html>

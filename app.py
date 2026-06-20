@@ -1,161 +1,121 @@
 from flask import Flask, render_template, request
 import os
 from werkzeug.utils import secure_filename
-from dotenv import load_dotenv
 
-# =========================
-# LOAD ENV
-# =========================
-load_dotenv()
+# PDF Loader
+from langchain_community.document_loaders import PyPDFLoader
 
-# =========================
-# IMPORTS
-# =========================
-from utils.pdf_loader import load_pdf
-from utils.text_splitter import split_documents
-from utils.embeddings import get_embeddings_model
+# Text Splitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-from langchain.vectorstores import FAISS
+# Embeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
+
+# Vector Store
+from langchain_community.vectorstores import FAISS
+
+# Ollama LLM
+from langchain_community.llms import Ollama
+
+# QA Chain
 from langchain.chains.question_answering import load_qa_chain
 
-from langchain_ollama import ChatOllama
-
-# =========================
-# GEMINI API KEY
-# =========================
-
-# =========================
-# FLASK APP
-# =========================
 app = Flask(__name__)
 
 UPLOAD_FOLDER = "uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
-
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-
-# =========================
-# GLOBAL VARIABLES
-# =========================
+# Global variables
 vectorstore = None
 qa_chain = None
 summary = ""
 
-# =========================
-# HOME PAGE
-# =========================
+
 @app.route("/")
 def home():
     return render_template("index.html")
 
 
-# =========================
-# UPLOAD PDF
-# =========================
 @app.route("/upload", methods=["POST"])
-def upload_pdf():
+def upload():
 
     global vectorstore
     global qa_chain
     global summary
 
     try:
-
         print("STEP 1")
 
-        if "pdf_file" not in request.files:
+        if "pdf" not in request.files:
             return render_template(
-                "index.html",
-                error="No file selected"
+                "result.html",
+                summary="No PDF uploaded.",
+                answer=""
             )
 
-        file = request.files["pdf_file"]
+        file = request.files["pdf"]
 
         if file.filename == "":
             return render_template(
-                "index.html",
-                error="Please choose a PDF"
+                "result.html",
+                summary="Please select a PDF file.",
+                answer=""
             )
 
         print("STEP 2")
 
-        # =========================
-        # SAVE PDF
-        # =========================
         filename = secure_filename(file.filename)
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
 
-        pdf_path = os.path.join(
-            app.config["UPLOAD_FOLDER"],
-            filename
-        )
-
-        file.save(pdf_path)
+        file.save(filepath)
 
         print("PDF SAVED")
 
-        # =========================
-        # LOAD PDF
-        # =========================
-        documents = load_pdf(pdf_path)
+        # Load PDF
+        loader = PyPDFLoader(filepath)
+        documents = loader.load()
 
         print("PDF LOADED")
 
-        # =========================
-        # SPLIT TEXT
-        # =========================
-        docs = split_documents(documents)
+        # Split Text
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=1000,
+            chunk_overlap=200
+        )
+
+        docs = text_splitter.split_documents(documents)
 
         print("TEXT SPLIT")
 
-        # =========================
-        # FULL TEXT
-        # =========================
+        # Create Summary
         full_text = ""
 
-        for doc in docs:
-            full_text += doc.page_content + "\n"
+        for doc in docs[:5]:
+            full_text += doc.page_content
 
-        # =========================
-        # SUMMARY
-        # =========================
-        summary = full_text[:3000]
+        summary = full_text[:2000]
 
         print("SUMMARY CREATED")
 
-        # =========================
-        # EMBEDDINGS
-        # =========================
-        embeddings = get_embeddings_model()
+        # Embeddings
+        embeddings = HuggingFaceEmbeddings(
+            model_name="sentence-transformers/all-MiniLM-L6-v2"
+        )
 
         print("EMBEDDINGS READY")
 
-        # =========================
-        # VECTOR STORE
-        # =========================
-        vectorstore = FAISS.from_documents(
-            docs,
-            embeddings
-        )
+        # Vector Store
+        vectorstore = FAISS.from_documents(docs, embeddings)
 
         print("VECTOR STORE READY")
 
-        # =========================
-        # NEW GEMINI MODEL
-        # =========================
-        llm = ChatOllama(
-        model="phi3",
-        temperature=0.3
-        )
+        # Ollama Model
+        llm = Ollama(model="phi3")
 
-        # =========================
-        # QA CHAIN
-        # =========================
-        qa_chain = load_qa_chain(
-            llm,
-            chain_type="stuff"
-        )
+        print("OLLAMA READY")
+
+        # QA Chain
+        qa_chain = load_qa_chain(llm, chain_type="stuff")
 
         print("QA CHAIN READY")
 
@@ -166,45 +126,46 @@ def upload_pdf():
         )
 
     except Exception as e:
-
         print("ERROR:", str(e))
 
         return render_template(
-            "index.html",
-            error=str(e)
+            "result.html",
+            summary=f"Error: {str(e)}",
+            answer=""
         )
 
 
-# =========================
-# ASK QUESTION
-# =========================
 @app.route("/ask", methods=["POST"])
-def ask_question():
+def ask():
 
     global vectorstore
     global qa_chain
     global summary
 
     try:
-
         question = request.form["question"]
+
+        print("QUESTION:", question)
 
         if vectorstore is None:
             return render_template(
                 "result.html",
-                summary=summary,
-                answer="Please upload PDF first."
+                summary="Please upload a PDF first.",
+                answer=""
             )
 
-        docs = vectorstore.similarity_search(
-            question,
-            k=3
-        )
+        # Similarity Search
+        docs = vectorstore.similarity_search(question, k=3)
 
+        print("DOCUMENTS FOUND")
+
+        # Generate Answer
         response = qa_chain.run(
             input_documents=docs,
             question=question
         )
+
+        print("ANSWER GENERATED")
 
         return render_template(
             "result.html",
@@ -213,8 +174,7 @@ def ask_question():
         )
 
     except Exception as e:
-
-        print("QUESTION ERROR:", str(e))
+        print("ASK ERROR:", str(e))
 
         return render_template(
             "result.html",
@@ -223,13 +183,10 @@ def ask_question():
         )
 
 
-# =========================
-# MAIN
-# =========================
 if __name__ == "__main__":
     app.run(
         host="0.0.0.0",
         port=5000,
-        debug=False
+        debug=False,
+        use_reloader=False
     )
-    
